@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RocketCoffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Serif:opsz,wght@8..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Roboto', sans-serif;
+        padding: 20px;
+        background-color: #fffaf7;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      header h1 {
+        font-family: 'Roboto Serif', serif;
+        font-size: 2.4rem;
+        color: #3e2723;
+      }
+
+      header h1 span {
+        color: #d84315;
+      }
+
+      header p {
+        font-size: 1rem;
+        color: #555;
+        margin-top: 5px;
+      }
+
+      section {
+        margin-bottom: 40px;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #6d4c41;
+        border-left: 5px solid #d84315;
+        padding-left: 10px;
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      li {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 15px;
+        padding: 10px;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .menu-left {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .menu-left h3 {
+        font-size: 1.2rem;
+        color: #4e342e;
+      }
+
+      .description {
+        font-size: 0.95rem;
+        color: #666;
+      }
+
+      .menu-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 5px;
+        min-width: 120px;
+      }
+
+      .price {
+        font-weight: bold;
+        color: #2e7d32;
+        font-size: 1rem;
+      }
+
+      .add-btn {
+        background-color: #d84315;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .add-btn:hover {
+        background-color: #bf360c;
+      }
+
+      .remove-btn {
+        background-color: #b71c1c;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      .pedido {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px #eee;
+      }
+
+      .pagar-btn, .finalizar-btn {
+        background-color: #2e7d32;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        margin-top: 15px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .pagar-btn:hover {
+        background-color: #1b5e20;
+      }
+
+      .finalizar-btn[disabled] {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      #cart-list li {
+        font-size: 1rem;
+        padding: 5px 0;
+        color: #444;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .qr-section {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 40px;
+        border-top: 2px dashed #ccc;
+        display: none;
+      }
+
+      .qr-section.visible {
+        display: block;
+      }
+
+      .qr-section img {
+        max-width: 250px;
+        width: 100%;
+        height: auto;
+        margin-top: 15px;
+      }
+
+      .qr-section h2 {
+        font-size: 1.4rem;
+        color: #1b5e20;
+      }
+
+      .qr-section p {
+        margin-top: 10px;
+        font-size: 1rem;
+        color: #555;
+      }
+
+      @media (min-width: 600px) {
+        main {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Rocket<span>Coffee</span></h1>
+      <p>Aberto todos os dias. 8h - 21h</p>
+    </header>
+
+    <main>
+      <section id="menu">
+        <h2>Brunch</h2>
+        <ul id="brunch-list"></ul>
+
+        <h2>Bebidas</h2>
+        <ul id="drink-list"></ul>
+      </section>
+
+      <section class="cart-section pedido">
+        <h2>Seu Pedido</h2>
+        <ul id="cart-list"></ul>
+        <p><strong>Total:</strong> R$ <span id="total">0.00</span></p>
+        <button class="pagar-btn" onclick="pagar()">Pagar com Pix</button>
+        <button id="finalizar" class="finalizar-btn" onclick="finalizarPedido()" disabled>Finalizar Pedido</button>
+      </section>
+    </main>
+
+    <footer id="qr-footer" class="qr-section">
+      <h2>Pagamento via Pix</h2>
+      <p>Escaneie o QR Code abaixo com seu app de pagamentos:</p>
+      <img src="qr_code.webp.webp" alt="QR Code do PIX" />
+    </footer>
+
+    <script>
+      const menuBrunch = [
+        { nome: "Waffle Doce", preco: 22.9, descricao: "Servido com mel e frutas frescas." },
+        { nome: "Panqueca Americana", preco: 17.9, descricao: "Tradicional, fofinha e com maple syrup." },
+        { nome: "Ovos com Bacon", preco: 13.9, descricao: "Ovos mexidos com tiras crocantes de bacon." },
+        { nome: "Frango à passarinho", preco: 23.9, descricao: "Frango temperado e frito na hora." },
+        { nome: "Torradas com Avocado", preco: 18.9, descricao: "Com limão, sal rosa e pimenta-do-reino." },
+        { nome: "Sanduíche Caprese", preco: 21.5, descricao: "Com tomate, manjericão e muçarela de búfala." },
+        { nome: "Mini Croissants", preco: 19.9, descricao: "Assados na hora com manteiga francesa." },
+      ];
+
+      const menuBebidas = [
+        { nome: "Café com Leite", preco: 8.99, descricao: "Café espresso com leite vaporizado." },
+        { nome: "Suco de Uva", preco: 13.99, descricao: "Natural e sem adição de açúcar." },
+        { nome: "Suco de Maracujá", preco: 15.99, descricao: "Refrescante, feito na hora." },
+        { nome: "Coca-Cola", preco: 15.0, descricao: "350ml, gelada." },
+        { nome: "Chá Gelado de Hibisco", preco: 9.9, descricao: "Chá artesanal com toque cítrico." },
+        { nome: "Capuccino Cremoso", preco: 12.0, descricao: "Com espuma cremosa e toque de canela." },
+        { nome: "Limonada Suíça", preco: 11.5, descricao: "Bebida cítrica com hortelã." },
+      ];
+
+      const cart = [];
+
+      function renderMenu(lista, elementoPaiId) {
+        const listaHtml = document.getElementById(elementoPaiId);
+        lista.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <div class="menu-item">
+              <div class="menu-left">
+                <h3>${item.nome}</h3>
+                <p class="description">${item.descricao}</p>
+              </div>
+              <div class="menu-right">
+                <strong class="price">R$ ${item.preco.toFixed(2)}</strong>
+                <button class="add-btn" onclick='adicionarItem("${item.nome}", ${item.preco})'>Adicionar</button>
+              </div>
+            </div>
+          `;
+          listaHtml.appendChild(li);
+        });
+      }
+
+      function adicionarItem(nome, preco) {
+        cart.push({ nome, preco });
+        atualizarCarrinho();
+      }
+
+      function removerItem(index) {
+        cart.splice(index, 1);
+        atualizarCarrinho();
+      }
+
+      function atualizarCarrinho() {
+        const ul = document.getElementById("cart-list");
+        const totalSpan = document.getElementById("total");
+        ul.innerHTML = "";
+        let total = 0;
+
+        cart.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${item.nome} - R$ ${item.preco.toFixed(2)} <button class='remove-btn' onclick='removerItem(${index})'>Remover</button>`;
+          ul.appendChild(li);
+          total += item.preco;
+        });
+
+        totalSpan.textContent = total.toFixed(2);
+      }
+
+      function pagar() {
+        alert("Faça o pagamento no final da tela :) ");
+        document.getElementById("finalizar").disabled = false;
+        document.getElementById("qr-footer").classList.add("visible");
+      }
+
+      function finalizarPedido() {
+        if (cart.length === 0) {
+          alert("Seu carrinho está vazio!");
+          return;
+        }
+
+        alert("Pedido finalizado com sucesso! Obrigado por escolher o RocketCoffee.");
+        cart.length = 0;
+        atualizarCarrinho();
+        document.getElementById("finalizar").disabled = true;
+        document.getElementById("qr-footer").classList.remove("visible");
+      }
+
+      renderMenu(menuBrunch, "brunch-list");
+      renderMenu(menuBebidas, "drink-list");
+    </script>
+  </body>
+</html>
